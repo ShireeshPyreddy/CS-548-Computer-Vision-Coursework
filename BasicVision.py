@@ -22,6 +22,7 @@
 
 import sys
 import numpy as np
+import torch
 import tensorflow as tf
 import cv2
 import pandas
@@ -42,10 +43,19 @@ def main():
     print(tf.reduce_sum(tf.random.normal([1000, 1000])))    # Should print number tensor
     
     ###############################################################################
+    # PYTORCH
+    ###############################################################################
+    
+    b = torch.rand(5,3)
+    print(b)
+    print("Torch CUDA?:", torch.cuda.is_available())
+    
+    ###############################################################################
     # PRINT OUT VERSIONS
     ###############################################################################
 
     print("Tensorflow:", tf.__version__)    
+    print("Torch:", torch.__version__)
     print("Numpy:", np.__version__)
     print("OpenCV:", cv2.__version__)
     print("Pandas:", pandas.__version__)

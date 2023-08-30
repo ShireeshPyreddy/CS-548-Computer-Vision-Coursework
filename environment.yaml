@@ -1,0 +1,33 @@
+name: CV
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip=23.2.1
+  - cudatoolkit=11.8.0
+  - pytorch 
+  - torchvision 
+  - torchaudio 
+  - pytorch-cuda=11.8 
+  - pip:
+      - nvidia-pyindex
+      - nvidia-cudnn-cu11==8.9.4.25  
+      - tensorflow<2.11
+      - opencv-python
+      - pillow 
+      - pandas 
+      - scikit-learn 
+      - scikit-image 
+      - matplotlib 
+      - pylint 
+      - tensorflow_datasets
+      - gradio
+      - typing-extensions==4.5
+      - pydantic==1.9
+      - pydantic-core==0.42.0
+      - huggingface-hub
+      
+# conda env create -f environment.yaml

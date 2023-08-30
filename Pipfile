@@ -8,6 +8,11 @@ url = "https://pypi.ngc.nvidia.com"
 verify_ssl = true
 name = "nvidia"
 
+[[source]]
+url = "https://download.pytorch.org/whl/cu118"
+verify_ssl = true
+name = "torch"
+
 [packages]
 cuda-python = "*"
 nvidia-cuda-runtime-cu11 = "==11.8.89"
@@ -30,6 +35,9 @@ gradio = "*"
 typing-extensions = "==4.5"
 pydantic = "==1.9"
 pydantic-core = "==0.42.0"
+torch = {version = "*", index = "torch"}
+torchvision = {version = "*", index = "torch"}
+torchaudio = {version = "*", index = "torch"}
 
 [dev-packages]
 
