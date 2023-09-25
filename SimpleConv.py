@@ -5,7 +5,7 @@ import numpy as np
 
 def main():
     input_node = Input(shape=(None, None, 1))
-    filter_layer = Conv2D(1, kernel_size=3, 
+    filter_layer = Conv2D(1, kernel_size=5, 
                           padding="same", 
                           use_bias=False)
     output_node = filter_layer(input_node)

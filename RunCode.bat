@@ -1,9 +1,0 @@
-@echo off
-SET DRIVE_LETTER=%cd:~0,2%
-SET BASE_DIR=%DRIVE_LETTER%\Software
-
-SET PATH=%BASE_DIR%\PortableGit\bin;%PATH%
-SET PATH=%BASE_DIR%\CV;%PATH%
-SET PATH=%BASE_DIR%\CV\Scripts;%PATH%
-
-START "" %BASE_DIR%\VSCode-win32-x64-1.81.1\Code.exe 
