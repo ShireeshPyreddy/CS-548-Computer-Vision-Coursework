@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import pandas as pd
 import General_Testing as GT
-# import A01
+import A01
 from Test_A01 import *
 
 class Test_A01_Grad(Test_A01):   
@@ -70,3 +70,4 @@ def main():
 
 if __name__ == '__main__':    
     main()
+
