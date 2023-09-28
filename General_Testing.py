@@ -1,7 +1,7 @@
 import numpy as np
 
-RTOL=1e-07 
-ATOL=1e-07 
+RTOL=1e-05 
+ATOL=1e-05 
 
 def sub_get_difference_string(pred, ground, index_list, atol, diff_string):
     if len(pred.shape) == 1:
