@@ -125,7 +125,10 @@ def do_adaptive_histogram_equalize(image, block_cnt, cl_thresh):
     
             sub_image = image[sr:er, sc:ec]
             
-            transformation_func = get_hist_equalize_transform(sub_image, do_stretching=True, do_cl=True, cl_thresh=cl_thresh)
+            transformation_func = get_hist_equalize_transform(sub_image, 
+                                                              do_stretching=True, 
+                                                              do_cl=True, 
+                                                              cl_thresh=cl_thresh)
             all_transforms.append(transformation_func)
     
     for each_row_index in range(len(image)):
@@ -139,10 +142,10 @@ def do_adaptive_histogram_equalize(image, block_cnt, cl_thresh):
             br_floor, br_ceil = m.floor(br), m.ceil(br)
             bc_floor, bc_ceil = m.floor(bc), m.ceil(bc)
             
-            upleft_index = tuple(clamp((int(br_floor), int(bc_floor)), 0, block_cnt - 1))
-            upright_index = tuple(clamp((int(br_floor), int(bc_ceil)), 0, block_cnt - 1))
-            downleft_index = tuple(clamp((int(br_ceil), int(bc_floor)), 0, block_cnt - 1))
-            downright_index = tuple(clamp((int(br_ceil), int(bc_ceil)), 0, block_cnt - 1))
+            upleft_index = clamp([br_floor, bc_floor], 0, block_cnt - 1)
+            upright_index = clamp([br_floor, bc_ceil], 0, block_cnt - 1)
+            downleft_index = clamp([br_ceil, bc_floor], 0, block_cnt - 1)
+            downright_index = clamp([br_ceil, bc_ceil], 0, block_cnt - 1)
             
             upleft_index = get_block_index(upleft_index, block_cnt)
             upright_index = get_block_index(upright_index, block_cnt)
@@ -186,10 +189,12 @@ def grad_intensity_callback(input_img, equal_type, block_cnt, cl_thresh):
     return output_img
 
 def grad_main():
-    demo = gr.Interface(fn=grad_intensity_callback, inputs=["image", gr.Dropdown(choices=["regular",
-    "stretching",
-    "adaptive"],
-    value="regular"), gr.Number(value=8), gr.Number(value=40)], outputs=["image"])
+    demo = gr.Interface(fn=grad_intensity_callback, 
+                        inputs=["image", 
+                                gr.Dropdown(choices=["regular", "stretching", "adaptive"], value="regular"), 
+                                gr.Number(value=8), 
+                                gr.Number(value=40)],
+                        outputs=["image"])
     demo.launch() 
 
 
