@@ -10,13 +10,15 @@ def create_unnormalized_hist(image):
     
     for each_row in image:
         for each_col in each_row:
-            if each_col in count_values:
-                count_values[each_col] += 1
-            else:
-                count_values[each_col] = 1
+            # if each_col in count_values:
+            #     count_values[each_col] += 1
+            # else:
+            #     count_values[each_col] = 1
+            
+            hist_array[each_col] += 1
 
-    for key, value in count_values.items():
-        hist_array[key] = value
+    # for key, value in count_values.items():
+        # hist_array[key] = value
     
     return hist_array
 
