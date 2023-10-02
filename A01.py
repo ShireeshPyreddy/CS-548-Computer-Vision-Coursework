@@ -6,19 +6,9 @@ import gradio as gr
 def create_unnormalized_hist(image):
     hist_array = np.zeros(256, dtype=np.float32)
     
-    count_values = {}
-    
     for each_row in image:
         for each_col in each_row:
-            # if each_col in count_values:
-            #     count_values[each_col] += 1
-            # else:
-            #     count_values[each_col] = 1
-            
             hist_array[each_col] += 1
-
-    # for key, value in count_values.items():
-        # hist_array[key] = value
     
     return hist_array
 
@@ -47,8 +37,6 @@ def constrast_limit(hist, threshold):
             extra = each_element - threshold
             extra_sum += extra
             hist[each_index] = threshold
-    
-    print(extra_sum, hist.shape, len(hist))
     
     redist = extra_sum // len(hist)
     residual = extra_sum % len(hist)
