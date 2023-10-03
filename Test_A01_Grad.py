@@ -66,7 +66,7 @@ class Test_A01_Grad(Test_A01):
            
 def main():
     runner = unittest.TextTestRunner()
-    runner.run(unittest.makeSuite(Test_A01))
+    runner.run(unittest.makeSuite(Test_A01_Grad))
 
 if __name__ == '__main__':    
     main()
