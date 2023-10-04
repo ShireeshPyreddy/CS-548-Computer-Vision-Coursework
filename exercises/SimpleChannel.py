@@ -46,6 +46,8 @@ def main():
 
     camera.release()
     cv2.destroyAllWindows()
+    
+    print("IT'S OVER!!!!")
 
 if __name__ == "__main__":
     main()
