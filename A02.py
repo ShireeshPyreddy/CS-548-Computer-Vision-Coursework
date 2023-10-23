@@ -83,7 +83,7 @@ def get_marr_hildreth_edges(image, scale, thresh):
                                 convert_uint8=False)
     
     lap = np.array([[0,1,0],[1,-4,1],[0,1,0]], 
-                   dtype="float")
+                   dtype="float64")
     
     lap_image = apply_filter(blur_image_2, 
                              lap, 
