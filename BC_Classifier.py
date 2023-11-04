@@ -12,7 +12,6 @@ from sklearn.metrics import classification_report, classification_report
 
 import tensorflow as tf
 
-#reproducability!
 random_seed = 27
 import random
 random.seed(random_seed)
@@ -188,10 +187,8 @@ def get_cell_image_by_bounding_box(image, bounding_box, dimension, image_shape):
     
 def extract_image_samples(data):
     
-    min_index, max_index = 0, 411
     dimension = 64
     
-    images_count = max_index - min_index
     images = np.array([])
     labels = np.array([])
     
@@ -200,8 +197,6 @@ def extract_image_samples(data):
         image = cv2.cvtColor(image.numpy(), cv2.COLOR_RGB2BGR)
         label = tfds.as_numpy(sample['label'])
         bbox = tfds.as_numpy(sample['bbox'])
-        # show_image_with_bounding_boxes(image, "Cell types", bbox, label, image.shape)
-        # break
 
         for bounding_box, lab in zip(bbox, label):
             label_named = "RBC" if lab == 0 else "WBC" if lab == 1 else "Plate" 
@@ -272,16 +267,16 @@ test_pcas = pca_fit.transform(test_df['image_vector'].tolist())
 print("Each cell image PCAs shape:", pcas[0].shape)
 
 model = SVC(kernel='rbf',
-          C = 1, #default 
-          gamma="scale", # default = 1 / (n_features * X.var())
+          C = 1, 
+          gamma="scale", 
           class_weight="balanced",
-          decision_function_shape="ovr", #only option, ovo deprecated
+          decision_function_shape="ovr", 
           random_state=random_seed,
           probability=True)
 
 svc_model = model.fit(pcas, combined_df['cell_type'].tolist())
-print(svc_model.score(pcas, combined_df['cell_type'].tolist()))
 
+print(svc_model.score(pcas, combined_df['cell_type'].tolist()))
 print(svc_model.score(test_pcas, test_df['cell_type'].tolist()))
 
 print("Classification report for classifier", classification_report(test_df['cell_type'].tolist(), 

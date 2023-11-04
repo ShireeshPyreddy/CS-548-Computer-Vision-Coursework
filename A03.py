@@ -1,7 +1,7 @@
 import numpy as np
-from General_A03 import *
 from skimage.segmentation import slic
 import joblib
+import cv2
 
 
 pca_fit = joblib.load('feature_reduction.pkl')
@@ -59,43 +59,33 @@ def crop_image(image, xmin, xmax, ymin, ymax):
     else: 
         return None
 
+
 def find_WBC(image):
     """
     To increase accuracy, finetuned VGG16 model using tensorflow and got 0.38 IOU with over 90% accuracy.
+    The training code can be found in Train_WBC.py file.
+    
     But below method outperformed the above deeplearning model. Hence continued with the below method.
     """
     pixels = image.reshape((-1, 3)).astype(np.float32)
 
-    # K-means parameters
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
-    k = 4  # Number of color clusters to find
+    k = 4  
     _, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
-    # Step 3: Assign cluster labels and find the closest cluster to the target colors
-    # Define your target colors in BGR space
     target_colors = {
         'white_blood_cells': np.array([255, 0, 0], dtype=np.float32),
         'red_blood_cells': np.array([125, 142, 175], dtype=np.float32)
     }
 
-    # Let's say we are looking for white blood cells for this example
     target_color = target_colors['white_blood_cells']
-
-    # Find the nearest cluster center to the target color
     closest_cluster_index = np.argmin(np.linalg.norm(centers - target_color, axis=1))
-
-    # Step 4: Create masks based on the closest cluster
     closest_cluster_mask = (labels.flatten() == closest_cluster_index).astype(np.uint8) * 255
-
-    # Reshape the mask back to the image shape
     mask_image = closest_cluster_mask.reshape(image.shape[:2])
-
-    # Step 5: Extract connected components
     num_labels, labels_im = cv2.connectedComponents(mask_image)
 
-    # Step 6: Find bounding boxes for each blob
     bounding_boxes = []
-    for i in range(1, num_labels):  # Start from 1 to ignore the background
+    for i in range(1, num_labels):  
         coords = np.where(labels_im == i)
         ymin, xmin = np.min(coords[0]), np.min(coords[1])
         ymax, xmax = np.max(coords[0]), np.max(coords[1])
@@ -112,16 +102,15 @@ def find_WBC(image):
     largest_rectangle = bounding_boxes[index_of_largest]
     
     filtered_bounding_boxes = [largest_rectangle]
-    
-    print(filtered_bounding_boxes)
-    
+        
     return filtered_bounding_boxes
 
 
 def find_RBC(image):
     
     """
-    To increase the accuracy, trained an image classifier using svm.
+    To increase the accuracy, trained an image classifier using svm and got 99% accuracy for RBC.
+    
     File name: BC_Classifier.py
     Saved Models:
         Features: feature_reduction.pkl
@@ -139,10 +128,10 @@ def find_RBC(image):
 
     pixels = group_means.reshape((-1, 3)).astype(np.float32)
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
-    k = 4  # Number of clusters
+    k = 4  
     _, bestLabels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
     target_colors = {
-        'white_blood_cells': (255, 0, 0),  # Remember: OpenCV uses BGR
+        'white_blood_cells': (255, 0, 0),  
         'red_blood_cells': (125, 142, 175)
     }
     
@@ -151,19 +140,16 @@ def find_RBC(image):
     
     centers[:] = 0
     centers[closest_group] = (255, 255, 255)
-    
     centers = centers.astype("uint8")
-    
     colors_per_clump = centers[bestLabels.flatten()]
     
     cell_mask = colors_per_clump[segments]
     cell_mask = cv2.cvtColor(cell_mask, cv2.COLOR_BGR2GRAY)
 
-    # Step 8: Use cv2.connectedComponents to get disjoint blobs
     retval, labels = cv2.connectedComponents(cell_mask)
 
     bounding_boxes = []
-    for i in range(1, retval):  # Start from 1 to avoid the background
+    for i in range(1, retval):
         coords = np.where(labels == i)
         if coords[0].size > 0 and coords[1].size > 0:
             ymin, xmin = np.min(coords[0]), np.min(coords[1])
@@ -174,17 +160,9 @@ def find_RBC(image):
             resized_cell = resize_with_padding(sample_grayscale_image, 64)
             features = pca_fit.transform([resized_cell.flatten()])
                         
-            print(features.shape)
             predicted_cell_type = model.predict(features)[0]
             if predicted_cell_type == "RBC":
             
                 bounding_boxes.append((ymin, xmin, ymax, xmax))
-
-    # print(boxes, "++++++++", bounding_boxes)
-    
-    # if len(bounding_boxes) == 2:
-    #     return bounding_boxes
-    # else:
-    #     return boxes
     
     return bounding_boxes
