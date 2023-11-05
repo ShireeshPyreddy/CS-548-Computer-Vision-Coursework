@@ -89,20 +89,23 @@ def find_WBC(image):
         coords = np.where(labels_im == i)
         ymin, xmin = np.min(coords[0]), np.min(coords[1])
         ymax, xmax = np.max(coords[0]), np.max(coords[1])
+        
         bounding_boxes.append((ymin, xmin, ymax, xmax))
     
+    # Did exploratory data analysis and came up with the below logic based on areas
     def calculate_area(coord):
         x1, y1, x2, y2 = coord
         return abs(x2 - x1) * abs(y2 - y1)
     
     areas = [calculate_area(coord) for coord in bounding_boxes]
-    
     max_area = max(areas)
-    index_of_largest = areas.index(max_area)
-    largest_rectangle = bounding_boxes[index_of_largest]
     
-    filtered_bounding_boxes = [largest_rectangle]
-        
+    filtered_bounding_boxes = []
+    
+    for each_index, each_area in enumerate(areas):
+        if each_area/max_area >= 0.68:
+            filtered_bounding_boxes.append(bounding_boxes[each_index])
+            
     return filtered_bounding_boxes
 
 
@@ -115,6 +118,9 @@ def find_RBC(image):
     Saved Models:
         Features: feature_reduction.pkl
         Model: image_classifier.pkl
+        
+    To take the advantage of the image classifer, I tried to improve the object detection 
+    but unable to detect most of them.
     """
     
     segments = slic(image, n_segments=200, compactness=10, start_label=0)
