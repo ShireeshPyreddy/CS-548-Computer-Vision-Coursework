@@ -73,12 +73,7 @@ def find_WBC(image):
     k = 4  
     _, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
-    target_colors = {
-        'white_blood_cells': np.array([255, 0, 0], dtype=np.float32),
-        'red_blood_cells': np.array([125, 142, 175], dtype=np.float32)
-    }
-
-    target_color = target_colors['white_blood_cells']
+    target_color = np.array([255, 0, 0], dtype=np.float32)
     closest_cluster_index = np.argmin(np.linalg.norm(centers - target_color, axis=1))
     closest_cluster_mask = (labels.flatten() == closest_cluster_index).astype(np.uint8) * 255
     mask_image = closest_cluster_mask.reshape(image.shape[:2])
@@ -136,12 +131,8 @@ def find_RBC(image):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
     k = 4  
     _, bestLabels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-    target_colors = {
-        'white_blood_cells': (255, 0, 0),  
-        'red_blood_cells': (125, 142, 175)
-    }
     
-    target_color = target_colors['red_blood_cells']
+    target_color = np.array([125, 142, 175], dtype=np.float32)
     closest_group = np.argmin(np.linalg.norm(centers - target_color, axis=1))
     
     centers[:] = 0
