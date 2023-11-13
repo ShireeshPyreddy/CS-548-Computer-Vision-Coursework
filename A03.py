@@ -87,7 +87,7 @@ def find_WBC(image):
         
         bounding_boxes.append((ymin, xmin, ymax, xmax))
     
-    # Did exploratory data analysis and came up with the below logic based on areas
+    # Did exploratory data analysis on training data and came up with the below logic based on areas
     def calculate_area(coord):
         x1, y1, x2, y2 = coord
         return abs(x2 - x1) * abs(y2 - y1)
