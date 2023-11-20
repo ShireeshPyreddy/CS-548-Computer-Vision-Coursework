@@ -19,7 +19,6 @@ def normalize_hist(hist):
     
     return normalized_hist
     
-
 def getOneLBPLabel(subimage, label_type):   
      
     center = subimage[1, 1]
@@ -88,9 +87,11 @@ def getOneRegionLBPFeatures(subImage, label_type):
     if label_type == LBP_LABEL_TYPES.UNIFORM:
         unhist = create_unnormalized_hist(subImage, size=10)
         nhist = normalize_hist(unhist)
+        
     elif label_type == LBP_LABEL_TYPES.FULL:
         unhist = create_unnormalized_hist(subImage, size=256)
         nhist = normalize_hist(unhist)
+        
     elif label_type == LBP_LABEL_TYPES.UNIFORM_ROT:
         unhist = create_unnormalized_hist(subImage, size=59)
         nhist = normalize_hist(unhist)
