@@ -248,27 +248,6 @@ class ResNet34(nn.Module):
         x = self.classifier(x)
         return x
 
-class EfficientNetB7():
-    
-    def __init__(self, features, class_cnt):
-        super(EfficientNetB7, self).__init__()
-        self.features = features
-        self.classifier = nn.Sequential(
-            nn.Dropout(),
-            nn.Linear(512, 256),
-            nn.ReLU(True),
-            nn.Dropout(),
-            nn.Linear(256, 128),
-            nn.ReLU(True),
-            nn.Linear(128, class_cnt)
-        )
-    
-    def forward(self, x):
-        x = self.features(x)
-        x = x.view(x.size(0), -1)
-        x = self.classifier(x)
-        return x
-
 def get_approach_names():
     approaches = ["naive_deep_network", "simple_network", "vanilla_cnn", "vanilla_cnn_with_dropout", "deep_cnn", "deep_cnn_with_batchnorm_dropout", "vgg19_bn", "resnet_34"]
     return approaches
@@ -291,8 +270,6 @@ def get_approach_description(approach_name):
         description = "Fine tuning pre-trained VGG19 model with batch normalization and 300 epochs."
     elif approach_name == "resnet_34":
         description = "Fine tuning pre-trained ResNet 34 model by adding a custom classification layer with leakyrelu as activation function."
-    elif approach_name == "efficient_net_b7":
-        description = ""
     return description
 
 def get_data_transform(approach_name, training):
@@ -333,7 +310,7 @@ def get_batch_size(approach_name):
         return 32
     elif approach_name in ["simple_network", "vanilla_cnn_with_dropout", "deep_cnn", "deep_cnn_with_batchnorm_dropout"]:
         return 64  
-    elif approach_name in ["vgg19_bn", "resnet_34", 'efficient_net_b7']:
+    elif approach_name in ["vgg19_bn", "resnet_34"]:
         return 128
     
 def create_model(approach_name, class_cnt):
