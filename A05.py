@@ -124,7 +124,8 @@ class VanillaCNNWithDropOut(nn.Module):
         return logits
 
 class DeepCNN(nn.Module):
-
+    # Taken from: https://www.kaggle.com/code/shadabhussain/cifar-10-cnn-using-pytorch and modifed some nodes and liner layers.
+    
     def __init__(self, class_cnt):
         super().__init__()
         
@@ -159,7 +160,8 @@ class DeepCNN(nn.Module):
         return logits
 
 class DeepCNNWithBatchNormDropOut(nn.Module):
-
+    # Modified the architecture from DeepCNN (Previous Class) and added BatchNorm2d layer.
+    
     def __init__(self, class_cnt):
         super().__init__()
         
@@ -199,8 +201,8 @@ class DeepCNNWithBatchNormDropOut(nn.Module):
         return logits
 
 class VGG19Bn(nn.Module):
-
     # Taken from: https://github.com/chengyangfu/pytorch-vgg-cifar10/blob/master/vgg.py
+    
     def __init__(self, features, class_cnt):
         super(VGG19Bn, self).__init__()
         self.features = features
