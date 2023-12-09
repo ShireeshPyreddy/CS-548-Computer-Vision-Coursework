@@ -9,3 +9,4 @@ data/
 assign05/output/model_naive_deep_network.pth
 assign05/output/model_vgg19_bn.pth
 assign05/output/model_resnet_34.pth
+logs/

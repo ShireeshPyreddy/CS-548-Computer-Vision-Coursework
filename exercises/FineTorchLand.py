@@ -3,38 +3,12 @@ from torch import nn
 from torchvision import datasets
 from torchvision.transforms import v2
 from torch.utils.data import DataLoader
+from torchvision.models import get_model, get_weight
 import cv2
 import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 
-class SimpleNetwork(nn.Module):
-    def __init__(self, class_cnt):
-        super().__init__()        
-        self.net_stack = nn.Sequential(
-            nn.Conv2d(3, 32, 3, padding="same"),
-            nn.ReLU(),
-            nn.Conv2d(32,32, 3, padding="same"),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            
-            nn.Conv2d(32, 64, 3, padding="same"),
-            nn.ReLU(),
-            nn.Conv2d(64, 64, 3, padding="same"),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            
-            nn.Flatten(),
-            
-            nn.Linear(4096, 32),
-            nn.ReLU(),
-            nn.Linear(32, class_cnt)
-        )
-        
-    def forward(self, x):        
-        logits = self.net_stack(x)
-        return logits
-    
 def test(model, loss_fn, device, dataloader, dataname):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
@@ -79,10 +53,33 @@ def train_one_epoch(model, loss_fn, optimizer, device, dataloader):
     
 
 def main():
-    data_transform = v2.Compose([
-        v2.ToImageTensor(),
-        v2.ConvertDtype()
-    ])
+    model = get_model("vgg19", weights="DEFAULT")
+    weights = get_weight("VGG19_Weights.DEFAULT")
+    preprocess = weights.transforms()
+    
+    for param in model.parameters():
+        param.requires_grad = False
+        
+    print("BEFORE:")
+    print(model)
+    
+    feature_cnt = model.classifier[0].in_features
+    model.classifier = nn.Sequential(
+        nn.Linear(feature_cnt, 32),
+        nn.ReLU(),
+        nn.Linear(32, 10)
+    )
+    
+    print("AFTER:")
+    print(model)
+    
+    
+    
+    #data_transform = v2.Compose([
+    #    v2.ToImageTensor(),
+    #    v2.ConvertDtype()
+    #])
+    data_transform = preprocess
     
     train_data = datasets.CIFAR10(train=True, 
                                   root="data",
@@ -101,25 +98,7 @@ def main():
     test_dataloader = DataLoader(test_data,
                                  batch_size=batch_size)
     
-    
-    '''
-    train_iter = iter(train_dataloader)    
-    for _ in range(5):
-        X,y = next(train_iter)
-        print(X.shape, y.shape)
         
-        X = X.numpy()
-        X = X[0]
-        X = np.transpose(X, [1,2,0])
-        X = cv2.cvtColor(X, cv2.COLOR_RGB2BGR)
-        X = cv2.resize(X, dsize=None, fx=5.0, fy=5.0)
-        
-        cv2.imshow("IMAGE", X)
-        cv2.waitKey(-1)
-        cv2.destroyAllWindows()
-    '''
-    
-    model = SimpleNetwork(class_cnt=10)
     
     device = ("cuda" if torch.cuda.is_available()
               else "mps" if torch.backends.mps.is_available()
