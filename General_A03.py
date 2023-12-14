@@ -228,10 +228,17 @@ def predict_dataset(dataset, prefix, out_dir, cell_type, find_cell_func):
 # PRINTS METRICS (to STDOUT or file)
 ###############################################################################
 def print_metrics(train_metrics, test_metrics, stream=sys.stdout):
+    out_str = ""
     print("TRAINING:", file=stream)
     for key in train_metrics:
         print("\t", key, "=", train_metrics[key], file=stream)
+        out_str += str(train_metrics[key]) + "\t"
   
     print("TESTING:", file=stream)
     for key in test_metrics:
         print("\t", key, "=", test_metrics[key], file=stream)
+        out_str += str(test_metrics[key]) + "\t"
+
+    print("", file=stream)
+    print(out_str, file=stream)
+
